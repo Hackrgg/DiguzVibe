@@ -78,7 +78,6 @@ export class LocalContainer {
   };
 
   constructor() {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     const lr = window.localRunner!;
 
@@ -163,7 +162,9 @@ export class LocalContainer {
       .then((info) => {
         this.platform = info.platform;
       })
-      .catch(() => {});
+      .catch((_err) => {
+        // ignore info load failure — defaults remain
+      });
 
     this.#globalServerReadyUnsub = lr.onServerReady(({ port, url }) => {
       self.#emit('server-ready', port, url);
