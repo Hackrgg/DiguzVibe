@@ -13,6 +13,7 @@ import { LOCAL_PROVIDERS } from '~/lib/stores/settings';
 import { cubicEasingFn } from '~/utils/easings';
 import { createScopedLogger, renderLogger } from '~/utils/logger';
 import { BaseChat } from './BaseChat';
+import { getApiKeysFromCookies } from './APIKeyManager';
 import Cookies from 'js-cookie';
 import { debounce } from '~/utils/debounce';
 import { useSettings } from '~/lib/hooks/useSettings';
@@ -115,7 +116,7 @@ export const ChatImpl = memo(
     });
     const { showChat } = useStore(chatStore);
     const [animationScope, animate] = useAnimate();
-    const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const [apiKeys, setApiKeys] = useState<Record<string, string>>(getApiKeysFromCookies);
     const [chatMode, setChatMode] = useState<'discuss' | 'build'>('build');
     const [selectedElement, setSelectedElement] = useState<ElementInfo | null>(null);
     const mcpSettings = useMCPStore((state) => state.settings);
@@ -408,7 +409,8 @@ export const ChatImpl = memo(
       }
 
       const needsApiKey = !LOCAL_PROVIDERS.includes(provider.name);
-      const hasApiKey = !!apiKeys[provider.name];
+      const liveKeys = getApiKeysFromCookies();
+      const hasApiKey = !!apiKeys[provider.name] || !!liveKeys[provider.name];
 
       if (needsApiKey && !hasApiKey) {
         toast.error(`No ${provider.name} API key — enter it in the chat box below the model selector`, {
@@ -633,7 +635,8 @@ export const ChatImpl = memo(
 
     const handleImplementPlan = useCallback(() => {
       const needsApiKey = !LOCAL_PROVIDERS.includes(provider.name);
-      const hasApiKey = !!apiKeys[provider.name];
+      const liveKeys = getApiKeysFromCookies();
+      const hasApiKey = !!apiKeys[provider.name] || !!liveKeys[provider.name];
 
       if (needsApiKey && !hasApiKey) {
         toast.error(`No ${provider.name} API key — enter it in the chat box below the model selector`, {
