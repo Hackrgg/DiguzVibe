@@ -6,7 +6,10 @@ import { Header } from '~/components/header/Header';
 import BackgroundRays from '~/components/ui/BackgroundRays';
 
 export const meta: MetaFunction = () => {
-  return [{ title: 'Bolt' }, { name: 'description', content: 'Talk with Bolt, an AI assistant from StackBlitz' }];
+  return [
+    { title: 'DIGUZ Vibe Coder' },
+    { name: 'description', content: 'Build something real. DIGUZ turns your idea into a working app.' },
+  ];
 };
 
 export const loader = () => json({});

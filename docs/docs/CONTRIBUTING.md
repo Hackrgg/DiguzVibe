@@ -96,14 +96,17 @@ Interested in maintaining and growing the project? Fill out our [Contributor App
      ...
      ```
   3. **For Docker users**: Run the setup script or manually copy `.env.local` to `.env`:
+
      ```bash
      # Option 1: Use the setup script
      ./scripts/setup-env.sh
-     
+
      # Option 2: Manual copy
      cp .env.local .env
      ```
+
      Docker Compose requires `.env` for variable substitution.
+
   4. Optionally set:
      - Debug level: `VITE_LOG_LEVEL=debug`
      - Context size: `DEFAULT_NUM_CTX=32768`

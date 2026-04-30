@@ -1,3 +1,45 @@
+@keyframes diguz-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes diguz-float-slow {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(13deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(13deg);
+  }
+}
+
+@keyframes diguz-float-pulse {
+  0%,
+  100% {
+    transform: translateY(0px);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+.diguz-float {
+  animation: diguz-float 6s ease-in-out infinite;
+}
+.diguz-float-slow {
+  animation: diguz-float-slow 8s ease-in-out infinite;
+}
+.diguz-float-pulse {
+  animation: diguz-float-pulse 5s ease-in-out infinite;
+}
+
 .animated {
   animation-fill-mode: both;
   animation-duration: var(--animate-duration, 0.2s);

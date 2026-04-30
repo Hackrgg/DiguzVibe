@@ -66,7 +66,6 @@ If you're new to installing software from GitHub, don't worry! If you encounter 
 
 1. **Install Git**: [Download Git](https://git-scm.com/downloads)
 2. **Install Node.js**: [Download Node.js](https://nodejs.org/en/download/)
-
    - After installation, the Node.js path is usually added to your system automatically. To verify:
      - **Windows**: Search for "Edit the system environment variables," click "Environment Variables," and check if `Node.js` is in the `Path` variable.
      - **Mac/Linux**: Open a terminal and run:
@@ -116,7 +115,8 @@ ANTHROPIC_API_KEY=XXX
 Once you've set your keys, you can proceed with running the app. You will set these keys up during the initial setup, and you can revisit and update them later after the app is running.
 
 **Important for Docker users**: Docker Compose needs a `.env` file for variable substitution. After creating `.env.local`:
-- Run `./scripts/setup-env.sh` to automatically sync the files, or  
+
+- Run `./scripts/setup-env.sh` to automatically sync the files, or
 - Manually copy: `cp .env.local .env`
 
 **Note**: Never commit your `.env.local` or `.env` files to version control. They're already included in the `.gitignore`.
@@ -133,6 +133,7 @@ Alternatively, you can configure your API keys directly in the application using
 6. **Verify Configuration**: Look for the green checkmark indicator showing the provider is properly configured
 
 The interface provides:
+
 - **Real-time validation** with visual status indicators
 - **Bulk operations** to enable/disable multiple providers at once
 - **Secure storage** of API keys in browser cookies
@@ -388,6 +389,7 @@ bolt.diy supports MCP (Model Context Protocol) servers to extend AI capabilities
 4. Enable/disable servers as needed
 
 MCP servers can provide:
+
 - Database connections and queries
 - File system operations
 - API integrations
@@ -432,18 +434,21 @@ bolt.diy provides one-click deployment to popular hosting platforms, making it e
 ### Supported Platforms
 
 #### Vercel Deployment
+
 1. Connect your Vercel account in Settings → Connections → Vercel
 2. Click the deploy button in your project
 3. bolt.diy automatically builds and deploys your project
 4. Get a live URL instantly with Vercel's global CDN
 
 #### Netlify Deployment
+
 1. Connect your Netlify account in Settings → Connections → Netlify
 2. Deploy with a single click
 3. Automatic build configuration and optimization
 4. Preview deployments for every change
 
 #### GitHub Pages
+
 1. Connect your GitHub account
 2. Push your project to a GitHub repository
 3. Enable GitHub Pages in repository settings
@@ -481,6 +486,7 @@ bolt.diy integrates with Supabase to provide backend database functionality, aut
 ### Integration with AI Development
 
 The AI can help you:
+
 - **Design database schemas** for your applications
 - **Write SQL queries** and database functions
 - **Implement authentication flows**
@@ -514,6 +520,7 @@ bolt.diy uses WebContainer technology to provide a secure, isolated development 
 ### Supported Technologies
 
 WebContainer supports all major JavaScript frameworks and tools:
+
 - React, Vue, Angular, Svelte
 - Next.js, Nuxt, Astro, Remix
 - Vite, Webpack, Parcel
@@ -529,6 +536,7 @@ The WebContainer integration provides a seamless development experience without 
 bolt.diy comes with a comprehensive collection of starter templates to help you quickly bootstrap your projects. Choose from popular frameworks and technologies:
 
 ### Frontend Frameworks
+
 - **React + Vite** - Modern React setup with TypeScript
 - **Vue.js** - Progressive JavaScript framework
 - **Angular** - Enterprise-ready framework
@@ -536,6 +544,7 @@ bolt.diy comes with a comprehensive collection of starter templates to help you 
 - **SolidJS** - Reactive framework with fine-grained updates
 
 ### Full-Stack Frameworks
+
 - **Next.js with shadcn/ui** - React framework with UI components
 - **Astro** - Static site generator for content-focused sites
 - **Qwik** - Resumable framework for instant loading
@@ -543,14 +552,17 @@ bolt.diy comes with a comprehensive collection of starter templates to help you 
 - **Nuxt** - Vue.js meta-framework
 
 ### Mobile & Cross-Platform
+
 - **Expo App** - React Native with Expo
 - **React Native** - Cross-platform mobile development
 
 ### Presentation & Content
+
 - **Slidev** - Developer-friendly presentations
 - **Astro Basic** - Lightweight static sites
 
 ### Vanilla JavaScript
+
 - **Vanilla Vite** - Minimal JavaScript setup
 - **Vite TypeScript** - TypeScript without framework
 
@@ -569,6 +581,7 @@ All templates are pre-configured with modern tooling, linting, and build process
 ## Available Scripts
 
 ### Development Scripts
+
 - `pnpm run dev`: Starts the development server with hot reloading
 - `pnpm run build`: Builds the project for production
 - `pnpm run start`: Runs the built application locally using Wrangler Pages
@@ -580,12 +593,14 @@ All templates are pre-configured with modern tooling, linting, and build process
 - `pnpm run typegen`: Generates TypeScript types using Wrangler
 
 ### Docker Scripts
+
 - `pnpm run dockerbuild`: Builds Docker image for development
 - `pnpm run dockerbuild:prod`: Builds Docker image for production
 - `pnpm run dockerrun`: Runs the Docker container
 - `docker compose --profile development up`: Runs with Docker Compose (development)
 
 ### Electron Scripts
+
 - `pnpm electron:build:mac`: Builds for macOS
 - `pnpm electron:build:win`: Builds for Windows
 - `pnpm electron:build:linux`: Builds for Linux
@@ -593,10 +608,12 @@ All templates are pre-configured with modern tooling, linting, and build process
 - `pnpm electron:build:unpack`: Creates unpacked build for testing
 
 ### Deployment Scripts
+
 - `pnpm run deploy`: Builds and deploys to Cloudflare Pages
 - `npm run dockerbuild`: Alternative Docker build command
 
 ### Utility Scripts
+
 - `pnpm run clean`: Cleans build artifacts
 - `pnpm run prepare`: Sets up Husky for git hooks
 
@@ -617,9 +634,11 @@ This will start the Remix Vite development server. You will need Google Chrome C
 ## Getting Help & Resources
 
 ### Help Icon in Sidebar
+
 bolt.diy includes a convenient help icon (?) in the sidebar that provides quick access to comprehensive documentation. Simply click the help icon to open the full documentation in a new tab.
 
 The documentation includes:
+
 - **Complete setup guides** for all supported providers
 - **Feature explanations** for advanced capabilities
 - **Troubleshooting guides** for common issues
@@ -627,6 +646,7 @@ The documentation includes:
 - **FAQ section** with detailed answers
 
 ### Community Support
+
 - **GitHub Issues**: Report bugs and request features
 - **Community Forum**: Join discussions at [thinktank.ottomator.ai](https://thinktank.ottomator.ai)
 - **Contributing Guide**: Learn how to contribute to the project

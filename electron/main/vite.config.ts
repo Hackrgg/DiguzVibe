@@ -11,15 +11,9 @@ export default defineConfig({
       external: [
         'vite',
         'electron',
-        ...[
-          'electron-log',
-
-          // electron-log uses fs internally
-          'fs',
-          'util',
-        ],
-
-        // Add all Node.js built-in modules as external
+        'electron-log',
+        'fs',
+        'util',
         'node:fs',
         'node:path',
         'node:url',
@@ -27,10 +21,22 @@ export default defineConfig({
         'node:stream',
         'node:events',
         'electron-store',
-        '@remix-run/node',
-
-        // "mime", // NOTE: don't enable. not working if it's external.
         'electron-updater',
+        // node built-ins that @remix-run/node depends on — keep external
+        'stream',
+        'http',
+        'https',
+        'zlib',
+        'crypto',
+        'buffer',
+        'querystring',
+        'url',
+        'path',
+        'os',
+        'events',
+        'assert',
+        'tty',
+        'net',
       ],
       output: {
         dir: 'build/electron',

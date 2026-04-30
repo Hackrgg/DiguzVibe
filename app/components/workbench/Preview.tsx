@@ -667,7 +667,14 @@ export const Preview = memo(({ setSelectedElement }: PreviewProps) => {
       )}
       <div className="bg-bolt-elements-background-depth-2 p-2 flex items-center gap-2">
         <div className="flex items-center gap-2">
-          <IconButton icon="i-ph:arrow-clockwise" onClick={reloadPreview} />
+          <button
+            onClick={reloadPreview}
+            title="Refresh preview"
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-bolt-elements-background-depth-3 hover:bg-bolt-elements-background-depth-4 text-bolt-elements-textSecondary hover:text-bolt-elements-textPrimary transition-colors border border-bolt-elements-borderColor"
+          >
+            <div className="i-ph:arrow-clockwise text-sm" />
+            <span>Refresh</span>
+          </button>
           <IconButton
             icon="i-ph:selection"
             onClick={() => setIsSelectionMode(!isSelectionMode)}

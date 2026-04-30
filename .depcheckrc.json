@@ -11,18 +11,7 @@
     "wrangler",
     "electron*"
   ],
-  "ignoreDirs": [
-    "dist",
-    "build",
-    "node_modules",
-    ".git"
-  ],
+  "ignoreDirs": ["dist", "build", "node_modules", ".git"],
   "skipMissing": false,
-  "ignorePatterns": [
-    "*.d.ts",
-    "*.test.ts",
-    "*.test.tsx",
-    "*.spec.ts",
-    "*.spec.tsx"
-  ]
+  "ignorePatterns": ["*.d.ts", "*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"]
 }

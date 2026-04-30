@@ -63,8 +63,9 @@ async function waitForServer(port, serverName) {
     let retries = 0;
 
     const checkServer = () => {
-      exec(`lsof -i :${port}`, (error, stdout) => {
-        if (stdout) {
+      const cmd = process.platform === 'win32' ? `netstat -ano | findstr :${port}` : `lsof -i :${port}`;
+      exec(cmd, (error, stdout) => {
+        if (stdout && stdout.trim()) {
           console.log(`✅ ${serverName} started`);
           resolve();
         } else if (retries >= MAX_RETRIES) {
@@ -86,8 +87,9 @@ async function waitForServer(port, serverName) {
  */
 async function buildElectronDeps() {
   return new Promise((resolve, reject) => {
-    const buildProcess = spawn('pnpm', ['electron:build:deps'], {
+    const buildProcess = spawn('npm', ['run', 'electron:build:deps'], {
       stdio: 'inherit',
+      shell: true,
       env: { ...process.env },
     });
 
@@ -118,8 +120,9 @@ async function startElectronDev() {
 
     // 2. Start Remix development server
     console.log('🌐 Starting Remix development server...');
-    remixProcess = spawn('pnpm', ['dev'], {
+    remixProcess = spawn('npm', ['run', 'dev'], {
       stdio: 'pipe',
+      shell: true,
       env: { ...process.env },
     });
 
@@ -138,7 +141,10 @@ async function startElectronDev() {
     // 3. Start Electron application
     console.log('⚡ Starting Electron application...');
 
-    const electronPath = path.join(__dirname, '..', 'node_modules', '.bin', 'electron');
+    const electronPath =
+      process.platform === 'win32'
+        ? path.join(__dirname, '..', 'node_modules', 'electron', 'dist', 'electron.exe')
+        : path.join(__dirname, '..', 'node_modules', '.bin', 'electron');
     const mainPath = path.join(__dirname, '..', 'build', 'electron', 'main', 'index.mjs');
 
     // Check if main process file exists
@@ -146,13 +152,12 @@ async function startElectronDev() {
       throw new Error(`Main process file not found: ${mainPath}`);
     }
 
+    const electronEnv = { ...process.env, NODE_ENV: 'development', ELECTRON_IS_DEV: '1' };
+    delete electronEnv.ELECTRON_RUN_AS_NODE;
+
     electronProcess = spawn(electronPath, [mainPath], {
       stdio: 'inherit',
-      env: {
-        ...process.env,
-        NODE_ENV: 'development',
-        ELECTRON_IS_DEV: '1',
-      },
+      env: electronEnv,
     });
 
     electronProcess.on('error', (error) => {

@@ -14,10 +14,10 @@ on:
         default: 'all'
         type: choice
         options:
-        - all
-        - ci-only
-        - security-only
-        - quality-only
+          - all
+          - ci-only
+          - security-only
+          - quality-only
 
 jobs:
   workflow-test-info:
@@ -195,50 +195,59 @@ jobs:
   test-results-summary:
     name: Test Results Summary
     runs-on: ubuntu-latest
-    needs: [workflow-test-info, test-basic-setup, test-linting, test-caching, test-security-tools, test-quality-checks, validate-docker-config]
+    needs:
+      [
+        workflow-test-info,
+        test-basic-setup,
+        test-linting,
+        test-caching,
+        test-security-tools,
+        test-quality-checks,
+        validate-docker-config,
+      ]
     if: always()
     steps:
       - name: Check all test results
         run: |
           echo "🧪 Workflow Testing Results Summary"
           echo "=================================="
-          
+
           if [[ "${{ needs.test-basic-setup.result }}" == "success" ]]; then
             echo "✅ Basic Setup: PASSED"
           else
             echo "❌ Basic Setup: FAILED"
           fi
-          
+
           if [[ "${{ needs.test-linting.result }}" == "success" ]]; then
             echo "✅ Linting Tests: PASSED"
           else
             echo "❌ Linting Tests: FAILED"
           fi
-          
+
           if [[ "${{ needs.test-caching.result }}" == "success" ]]; then
             echo "✅ Caching Tests: PASSED"
           else
             echo "❌ Caching Tests: FAILED"
           fi
-          
+
           if [[ "${{ needs.test-security-tools.result }}" == "success" ]]; then
             echo "✅ Security Tools: PASSED"
           else
             echo "❌ Security Tools: FAILED"
           fi
-          
+
           if [[ "${{ needs.test-quality-checks.result }}" == "success" ]]; then
             echo "✅ Quality Checks: PASSED"
           else
             echo "❌ Quality Checks: FAILED"
           fi
-          
+
           if [[ "${{ needs.validate-docker-config.result }}" == "success" ]]; then
             echo "✅ Docker Config: PASSED"
           else
             echo "❌ Docker Config: FAILED"
           fi
-          
+
           echo ""
           echo "Next steps:"
           echo "1. Review any failures above"

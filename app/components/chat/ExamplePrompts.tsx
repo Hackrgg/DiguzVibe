@@ -1,12 +1,12 @@
 import React from 'react';
 
 const EXAMPLE_PROMPTS = [
-  { text: 'Create a mobile app about bolt.diy' },
-  { text: 'Build a todo app in React using Tailwind' },
-  { text: 'Build a simple blog using Astro' },
-  { text: 'Create a cookie consent form using Material UI' },
-  { text: 'Make a space invaders game' },
-  { text: 'Make a Tic Tac Toe game in html, css and js only' },
+  { text: 'Build an ecommerce store with Stripe payments and product catalog' },
+  { text: 'Build a SaaS dashboard with auth, billing, and user management' },
+  { text: 'Create a landing page for a mobile app with waitlist signup' },
+  { text: 'Build a booking system with calendar and Stripe checkout' },
+  { text: 'Create a portfolio site with dark brutalist design' },
+  { text: 'Build a marketplace with listings, search, and seller profiles' },
 ];
 
 export function ExamplePrompts(sendMessage?: { (event: React.UIEvent, messageInput?: string): void | undefined }) {
@@ -25,7 +25,7 @@ export function ExamplePrompts(sendMessage?: { (event: React.UIEvent, messageInp
               onClick={(event) => {
                 sendMessage?.(event, examplePrompt.text);
               }}
-              className="border border-bolt-elements-borderColor rounded-full bg-gray-50 hover:bg-gray-100 dark:bg-gray-950 dark:hover:bg-gray-900 text-bolt-elements-textSecondary hover:text-bolt-elements-textPrimary px-3 py-1 text-xs transition-theme"
+              className="border border-bolt-elements-borderColor bg-transparent hover:border-[#8B2035] hover:text-white text-bolt-elements-textSecondary hover:bg-[rgba(139,32,53,0.1)] px-3 py-1.5 text-xs transition-all duration-150"
             >
               {examplePrompt.text}
             </button>

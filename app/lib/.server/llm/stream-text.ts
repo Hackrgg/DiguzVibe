@@ -22,6 +22,12 @@ export interface StreamingOptions extends Omit<Parameters<typeof _streamText>[0]
       supabaseUrl?: string;
     };
   };
+  stripeConnection?: {
+    isConnected: boolean;
+    publishableKey: string;
+    secretKey: string;
+    mode: 'test' | 'live';
+  };
 }
 
 const logger = createScopedLogger('stream-text');
@@ -160,6 +166,14 @@ export async function streamText(props: {
         hasSelectedProject: options?.supabaseConnection?.hasSelectedProject || false,
         credentials: options?.supabaseConnection?.credentials || undefined,
       },
+      stripe: options?.stripeConnection?.isConnected
+        ? {
+            isConnected: true,
+            publishableKey: options.stripeConnection.publishableKey,
+            secretKey: options.stripeConnection.secretKey,
+            mode: options.stripeConnection.mode,
+          }
+        : undefined,
     }) ?? getSystemPrompt();
 
   if (chatMode === 'build' && contextFiles && contextOptimization) {

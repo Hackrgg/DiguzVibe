@@ -16,6 +16,12 @@ export interface PromptOptions {
       supabaseUrl?: string;
     };
   };
+  stripe?: {
+    isConnected: boolean;
+    publishableKey: string;
+    secretKey: string;
+    mode: 'test' | 'live';
+  };
 }
 
 export class PromptLibrary {
@@ -30,12 +36,12 @@ export class PromptLibrary {
     default: {
       label: 'Default Prompt',
       description: 'An fine tuned prompt for better results and less token usage',
-      get: (options) => getFineTunedPrompt(options.cwd, options.supabase, options.designScheme),
+      get: (options) => getFineTunedPrompt(options.cwd, options.supabase, options.designScheme, options.stripe),
     },
     original: {
       label: 'Old Default Prompt',
       description: 'The OG battle tested default system Prompt',
-      get: (options) => getSystemPrompt(options.cwd, options.supabase, options.designScheme),
+      get: (options) => getSystemPrompt(options.cwd, options.supabase, options.designScheme, options.stripe),
     },
     optimized: {
       label: 'Optimized Prompt (experimental)',

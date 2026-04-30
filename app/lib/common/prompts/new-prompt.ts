@@ -11,6 +11,12 @@ export const getFineTunedPrompt = (
     credentials?: { anonKey?: string; supabaseUrl?: string };
   },
   designScheme?: DesignScheme,
+  stripe?: {
+    isConnected: boolean;
+    publishableKey: string;
+    secretKey: string;
+    mode: 'test' | 'live';
+  },
 ) => `
 You are Bolt, an expert AI assistant and exceptional senior software developer with vast knowledge across multiple programming languages, frameworks, and best practices, created by StackBlitz.
 
@@ -138,6 +144,27 @@ The year is 2025.
       : ''
   }
 </database_instructions>
+
+<stripe_instructions>
+  ${
+    stripe?.isConnected
+      ? `Stripe is connected (${stripe.mode} mode). Use these keys directly in generated code — never ask the user for them.
+  Publishable Key: ${stripe.publishableKey}
+  Secret Key: ${stripe.secretKey}
+  Mode: ${stripe.mode}
+
+  Rules:
+  - Use publishable key in client-side code only
+  - Use secret key in server-side code only, never expose it client-side
+  - Use @stripe/stripe-js for frontend, stripe npm package for backend
+  - API version: "2024-12-18.acacia"
+  - Amounts in cents (multiply price by 100)
+  - Always include error handling, loading states, and success/cancel pages
+  - ${stripe.mode === 'test' ? 'Test card: 4242 4242 4242 4242, any future date, any CVC' : 'LIVE mode — real payments will be processed'}
+  `
+      : `No Stripe connected. If payment functionality is needed, scaffold with placeholder keys and comment where to replace them.`
+  }
+</stripe_instructions>
 
 <artifact_instructions>
   Bolt may create a SINGLE comprehensive artifact containing:

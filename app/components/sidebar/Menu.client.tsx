@@ -331,14 +331,19 @@ export const Menu = () => {
         variants={menuVariants}
         style={{ width: '340px' }}
         className={classNames(
-          'flex selection-accent flex-col side-menu fixed top-0 h-full rounded-r-2xl',
-          'bg-white dark:bg-gray-950 border-r border-bolt-elements-borderColor',
+          'flex selection-accent flex-col side-menu fixed top-0 h-full',
+          'bg-white dark:bg-[#0A0A0A] border-r border-bolt-elements-borderColor',
           'shadow-sm text-sm',
           isSettingsOpen ? 'z-40' : 'z-sidebar',
         )}
       >
-        <div className="h-12 flex items-center justify-between px-4 border-b border-gray-100 dark:border-gray-800/50 bg-gray-50/50 dark:bg-gray-900/50 rounded-tr-2xl">
-          <div className="text-gray-900 dark:text-white font-medium"></div>
+        <div className="h-12 flex items-center justify-between px-4 border-b border-bolt-elements-borderColor bg-gray-50/50 dark:bg-[#1A1A1A]">
+          <div
+            className="text-gray-900 dark:text-white font-bold tracking-[0.15em] uppercase text-sm"
+            style={{ color: '#C9A84C', fontFamily: "'Sora', sans-serif" }}
+          >
+            DIGUZ
+          </div>
           <div className="flex items-center gap-3">
             <HelpButton onClick={() => window.open('https://stackblitz-labs.github.io/bolt.diy/', '_blank')} />
             <span className="font-medium text-sm text-gray-900 dark:text-white truncate">
@@ -365,7 +370,7 @@ export const Menu = () => {
             <div className="flex gap-2">
               <a
                 href="/"
-                className="flex-1 flex gap-2 items-center bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-500/20 rounded-lg px-4 py-2 transition-colors"
+                className="flex-1 flex gap-2 items-center bg-[rgba(139,32,53,0.1)] text-[#C9A84C] hover:bg-[rgba(139,32,53,0.2)] border border-[rgba(139,32,53,0.3)] px-4 py-2 transition-colors"
               >
                 <span className="inline-block i-ph:plus-circle h-4 w-4" />
                 <span className="text-sm font-medium">Start new chat</span>

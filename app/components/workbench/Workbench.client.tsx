@@ -1,7 +1,7 @@
 import { useStore } from '@nanostores/react';
 import { motion, type HTMLMotionProps, type Variants } from 'framer-motion';
 import { computed } from 'nanostores';
-import { memo, useCallback, useEffect, useState, useMemo } from 'react';
+import { memo, useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { Popover, Transition } from '@headlessui/react';
 import { diffLines, type Change } from 'diff';
@@ -309,12 +309,26 @@ export const Workbench = memo(
     const { exportChat } = useChatHistory();
     const [isSyncing, setIsSyncing] = useState(false);
 
+    const hasAutoSwitchedRef = useRef(false);
+
     const setSelectedView = (view: WorkbenchViewType) => {
       workbenchStore.currentView.set(view);
     };
 
+    const handleManualViewSelect = useCallback((view: WorkbenchViewType) => {
+      hasAutoSwitchedRef.current = true;
+      workbenchStore.currentView.set(view);
+    }, []);
+
     useEffect(() => {
-      if (hasPreview) {
+      if (streaming) {
+        hasAutoSwitchedRef.current = false;
+      }
+    }, [streaming]);
+
+    useEffect(() => {
+      if (hasPreview && !hasAutoSwitchedRef.current) {
+        hasAutoSwitchedRef.current = true;
         setSelectedView('preview');
       }
     }, [hasPreview]);
@@ -392,7 +406,7 @@ export const Workbench = memo(
             )}
           >
             <div className="absolute inset-0 px-2 lg:px-4">
-              <div className="h-full flex flex-col bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor shadow-sm rounded-lg overflow-hidden">
+              <div className="h-full flex flex-col bg-bolt-elements-background-depth-2 border border-bolt-elements-borderColor shadow-sm overflow-hidden">
                 <div className="flex items-center px-3 py-2 border-b border-bolt-elements-borderColor gap-1.5">
                   <button
                     className={`${showChat ? 'i-ph:sidebar-simple-fill' : 'i-ph:sidebar-simple'} text-lg text-bolt-elements-textSecondary mr-1`}
@@ -403,7 +417,7 @@ export const Workbench = memo(
                       }
                     }}
                   />
-                  <Slider selected={selectedView} options={sliderOptions} setSelected={setSelectedView} />
+                  <Slider selected={selectedView} options={sliderOptions} setSelected={handleManualViewSelect} />
                   <div className="ml-auto" />
                   {selectedView === 'code' && (
                     <div className="flex overflow-y-auto">

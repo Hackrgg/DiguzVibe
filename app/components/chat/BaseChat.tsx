@@ -138,7 +138,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     const TEXTAREA_MAX_HEIGHT = chatStarted ? 400 : 200;
     const [apiKeys, setApiKeys] = useState<Record<string, string>>(getApiKeysFromCookies());
     const [modelList, setModelList] = useState<ModelInfo[]>([]);
-    const [isModelSettingsCollapsed, setIsModelSettingsCollapsed] = useState(false);
+    const [isModelSettingsCollapsed, setIsModelSettingsCollapsed] = useState(true);
     const [isListening, setIsListening] = useState(false);
     const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
     const [transcript, setTranscript] = useState('');
@@ -349,14 +349,101 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       >
         <ClientOnly>{() => <Menu />}</ClientOnly>
         <div className="flex flex-col lg:flex-row overflow-y-auto w-full h-full">
-          <div className={classNames(styles.Chat, 'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full')}>
+          <div
+            className={classNames(
+              styles.Chat,
+              'flex flex-col flex-grow lg:min-w-[var(--chat-min-width)] h-full relative',
+            )}
+          >
+            {/* DIGUZ decorative shapes — only shown on landing */}
             {!chatStarted && (
-              <div id="intro" className="mt-[16vh] max-w-2xl mx-auto text-center px-4 lg:px-0">
-                <h1 className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in">
-                  Where ideas begin
+              <>
+                {/* Large pink circle — top right */}
+                <div
+                  className="diguz-shape diguz-float"
+                  style={{
+                    width: 320,
+                    height: 320,
+                    background: '#e97ab2',
+                    borderRadius: '50%',
+                    top: -60,
+                    right: -80,
+                    opacity: 0.92,
+                    animationDelay: '0s',
+                  }}
+                />
+                {/* Teal rotated square — bottom left */}
+                <div
+                  className="diguz-shape diguz-float-slow"
+                  style={{
+                    width: 160,
+                    height: 160,
+                    background: '#67baa8',
+                    transform: 'rotate(13deg)',
+                    bottom: 120,
+                    left: -40,
+                    opacity: 0.9,
+                    animationDelay: '1.5s',
+                  }}
+                />
+                {/* Gold circle outline — left-center */}
+                <div
+                  className="diguz-shape diguz-float-pulse"
+                  style={{
+                    width: 90,
+                    height: 90,
+                    borderRadius: '50%',
+                    border: '3px solid #e7c768',
+                    background: 'transparent',
+                    top: '38%',
+                    left: '8%',
+                    opacity: 0.85,
+                    animationDelay: '0.8s',
+                  }}
+                />
+                {/* Faded "VB" background text */}
+                <div
+                  className="diguz-shape select-none"
+                  style={{
+                    fontSize: 280,
+                    fontFamily: "'Sora', sans-serif",
+                    fontWeight: 900,
+                    color: 'rgba(44,35,28,0.05)',
+                    top: '10%',
+                    right: '5%',
+                    letterSpacing: '-0.04em',
+                    lineHeight: 1,
+                    userSelect: 'none',
+                  }}
+                >
+                  VB
+                </div>
+              </>
+            )}
+
+            {!chatStarted && (
+              <div id="intro" className="mt-[16vh] max-w-2xl mx-auto text-center px-4 lg:px-0 relative z-10">
+                <div className="inline-block mb-3 animate-fade-in">
+                  <span
+                    className="font-mono text-[11px] font-bold tracking-[0.24em] uppercase px-3 py-1"
+                    style={{
+                      border: '2px solid rgba(44,35,28,0.85)',
+                      color: '#1c1712',
+                      background: '#e97ab2',
+                      boxShadow: '4px 4px 0 rgba(44,35,28,0.45)',
+                    }}
+                  >
+                    DIGUZ VIBE CODER
+                  </span>
+                </div>
+                <h1
+                  className="text-3xl lg:text-6xl font-bold text-bolt-elements-textPrimary mb-4 animate-fade-in"
+                  style={{ fontFamily: "'Sora', sans-serif" }}
+                >
+                  Build something <span style={{ color: '#e97ab2' }}>real.</span>
                 </h1>
                 <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
-                  Bring ideas to life in seconds or get help on existing projects.
+                  Describe what you want — DIGUZ turns it into a working app.
                 </p>
               </div>
             )}

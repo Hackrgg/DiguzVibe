@@ -12,16 +12,91 @@ body {
   height: 100%;
   width: 100%;
   background-color: var(--bolt-elements-bg-depth-1);
+  font-family: 'Sora', 'IBM Plex Mono', sans-serif;
+}
+
+/* DIGUZ warm cream gradient background (light mode) */
+:root[data-theme='light'] body,
+body {
+  background:
+    radial-gradient(circle at top right, rgba(233, 122, 178, 0.07), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(103, 186, 168, 0.08), transparent 22%),
+    linear-gradient(180deg, #fbf5ec 0%, #f4eadc 100%);
+}
+
+/* DIGUZ warm dark gradient background (dark mode) */
+:root[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at top right, rgba(233, 122, 178, 0.05), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(103, 186, 168, 0.05), transparent 22%),
+    linear-gradient(180deg, #1c1712 0%, #231a13 100%);
+}
+
+/* DIGUZ dot grid overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(44, 35, 28, 0.08) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: 0.2;
+}
+
+:root[data-theme='dark'] body::before {
+  background-image: radial-gradient(circle, rgba(246, 239, 227, 0.06) 1px, transparent 1px);
+  opacity: 0.35;
 }
 
 :root {
   --gradient-opacity: 0.8;
-  --primary-color: rgba(158, 117, 240, var(--gradient-opacity));
-  --secondary-color: rgba(138, 43, 226, var(--gradient-opacity));
-  --accent-color: rgba(128, 59, 239, var(--gradient-opacity));
-  // --primary-color: rgba(147, 112, 219, var(--gradient-opacity));
-  // --secondary-color: rgba(138, 43, 226, var(--gradient-opacity));
-  // --accent-color: rgba(180, 170, 220, var(--gradient-opacity));
+  --primary-color: rgba(233, 122, 178, var(--gradient-opacity));
+  --secondary-color: rgba(231, 199, 104, var(--gradient-opacity));
+  --accent-color: rgba(233, 122, 178, var(--gradient-opacity));
+}
+
+/* DIGUZ Brutalist — zero border-radius on everything except decorative shapes */
+*:not(.diguz-shape),
+*:not(.diguz-shape)::before,
+*:not(.diguz-shape)::after {
+  border-radius: 0 !important;
+}
+
+.diguz-shape {
+  pointer-events: none;
+  position: absolute;
+}
+
+/* DIGUZ brutalist 4px offset shadow on elevated surfaces */
+[data-radix-popper-content-wrapper] > div {
+  box-shadow: 4px 4px 0 rgba(44, 35, 28, 0.45) !important;
+}
+
+/* DIGUZ utility classes */
+.brutal-border {
+  border: 2px solid rgba(44, 35, 28, 0.85);
+}
+
+.brutal-shadow {
+  box-shadow: 4px 4px 0 rgba(44, 35, 28, 0.55);
+}
+
+:root[data-theme='dark'] .brutal-shadow {
+  box-shadow: 4px 4px 0 rgba(233, 122, 178, 0.4);
+}
+
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(44, 35, 28, 0.11) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--bolt-elements-textSecondary);
+  font-size: 0.72rem;
 }
 
 .modern-scrollbar {

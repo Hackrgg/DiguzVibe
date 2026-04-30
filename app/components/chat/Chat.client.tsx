@@ -23,6 +23,7 @@ import { logStore } from '~/lib/stores/logs';
 import { streamingState } from '~/lib/stores/streaming';
 import { filesToArtifacts } from '~/utils/fileUtils';
 import { supabaseConnection } from '~/lib/stores/supabase';
+import { stripeConnection } from '~/lib/stores/stripe';
 import { defaultDesignScheme, type DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 import type { TextUIPart, FileUIPart, Attachment } from '@ai-sdk/ui-utils';
@@ -96,6 +97,7 @@ export const ChatImpl = memo(
     const actionAlert = useStore(workbenchStore.alert);
     const deployAlert = useStore(workbenchStore.deployAlert);
     const supabaseConn = useStore(supabaseConnection);
+    const stripeConn = useStore(stripeConnection);
     const selectedProject = supabaseConn.stats?.projects?.find(
       (project) => project.id === supabaseConn.selectedProjectId,
     );
@@ -147,6 +149,12 @@ export const ChatImpl = memo(
             supabaseUrl: supabaseConn?.credentials?.supabaseUrl,
             anonKey: supabaseConn?.credentials?.anonKey,
           },
+        },
+        stripe: {
+          isConnected: stripeConn.isConnected,
+          publishableKey: stripeConn.publishableKey,
+          secretKey: stripeConn.secretKey,
+          mode: stripeConn.mode,
         },
         maxLLMSteps: mcpSettings.maxLLMSteps,
       },
