@@ -9,6 +9,7 @@ import { isDev, DEFAULT_PORT } from './utils/constants';
 import { initViteServer, viteServer } from './utils/vite-server';
 import { setupMenu } from './ui/menu';
 import { createWindow } from './ui/window';
+import { setupLocalRunnerHandlers } from './handlers/local-runner';
 import { initCookies, storeCookies } from './utils/cookie';
 import { loadServerBuild, serveAsset } from './utils/serve';
 import { reloadOnChange } from './utils/reload';
@@ -193,6 +194,8 @@ declare global {
   console.log('Using renderer URL:', rendererURL);
 
   const win = await createWindow(rendererURL);
+
+  setupLocalRunnerHandlers(win);
 
   app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) {

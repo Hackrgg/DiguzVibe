@@ -111,7 +111,7 @@ export class WorkbenchStore {
     return this.#terminalStore.showTerminal;
   }
   get boltTerminal() {
-    return this.#terminalStore.boltTerminal;
+    return this.#terminalStore.boltTerminal as any;
   }
   get alert() {
     return this.actionAlert;
