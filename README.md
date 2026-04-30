@@ -8,16 +8,16 @@
 
 The entire UI is a 1:1 application of the diguz.com visual identity:
 
-| Token | Value | Use |
-|-------|-------|-----|
-| Background | `#f6efe3` | Warm cream — all surfaces |
-| Text | `#1c1712` | Dark brown — primary text |
-| Pink | `#e97ab2` | Accent, CTAs, hero badge |
-| Gold | `#e7c768` | Secondary accent, badges |
-| Teal | `#67baa8` | Tertiary accent, decorative |
-| Border | `2px solid rgba(44,35,28,0.9)` | All cards, inputs, buttons |
-| Shadow | 4px offset | Brutalist hard shadow on interactive elements |
-| Radius | `0` | Zero border-radius everywhere (brutalist) |
+| Token      | Value                          | Use                                           |
+| ---------- | ------------------------------ | --------------------------------------------- |
+| Background | `#f6efe3`                      | Warm cream — all surfaces                     |
+| Text       | `#1c1712`                      | Dark brown — primary text                     |
+| Pink       | `#e97ab2`                      | Accent, CTAs, hero badge                      |
+| Gold       | `#e7c768`                      | Secondary accent, badges                      |
+| Teal       | `#67baa8`                      | Tertiary accent, decorative                   |
+| Border     | `2px solid rgba(44,35,28,0.9)` | All cards, inputs, buttons                    |
+| Shadow     | 4px offset                     | Brutalist hard shadow on interactive elements |
+| Radius     | `0`                            | Zero border-radius everywhere (brutalist)     |
 
 **Fonts:** Sora (UI) + IBM Plex Mono (code/terminal)
 
