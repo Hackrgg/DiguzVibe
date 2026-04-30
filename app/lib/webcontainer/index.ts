@@ -19,10 +19,15 @@ export let webcontainer: Promise<WebContainer> = new Promise(() => {
 });
 
 if (!import.meta.env.SSR) {
+  console.log('[WebContainer] crossOriginIsolated:', window.crossOriginIsolated);
+  console.log('[WebContainer] SharedArrayBuffer available:', typeof SharedArrayBuffer !== 'undefined');
+
   webcontainer =
     import.meta.hot?.data.webcontainer ??
     Promise.resolve()
       .then(() => {
+        console.log('[WebContainer] Booting...');
+
         return WebContainer.boot({
           coep: 'credentialless',
           workdirName: WORK_DIR_NAME,
@@ -30,6 +35,7 @@ if (!import.meta.env.SSR) {
         });
       })
       .then(async (webcontainer) => {
+        console.log('[WebContainer] Boot successful');
         webcontainerContext.loaded = true;
 
         const { workbenchStore } = await import('~/lib/stores/workbench');
@@ -57,6 +63,11 @@ if (!import.meta.env.SSR) {
         });
 
         return webcontainer;
+      })
+      .catch((error) => {
+        console.error('[WebContainer] Boot FAILED:', error);
+        console.error('[WebContainer] crossOriginIsolated was:', window.crossOriginIsolated);
+        throw error;
       });
 
   if (import.meta.hot) {
