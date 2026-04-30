@@ -22,6 +22,10 @@ export function createWindow(rendererURL: string) {
     visualEffectState: 'active',
     webPreferences: {
       preload: preloadPath,
+      nodeIntegration: false,
+      contextIsolation: true,
+      webSecurity: false,
+      allowRunningInsecureContent: true,
     },
   });
 

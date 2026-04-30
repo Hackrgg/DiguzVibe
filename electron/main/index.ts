@@ -13,6 +13,10 @@ import { initCookies, storeCookies } from './utils/cookie';
 import { loadServerBuild, serveAsset } from './utils/serve';
 import { reloadOnChange } from './utils/reload';
 
+// Required for WebContainer (SharedArrayBuffer needs these)
+app.commandLine.appendSwitch('enable-features', 'SharedArrayBuffer');
+app.commandLine.appendSwitch('disable-web-security');
+
 Object.assign(console, log.functions);
 
 console.debug('main: import.meta.env:', import.meta.env);
@@ -71,6 +75,17 @@ declare global {
 (async () => {
   await app.whenReady();
   console.log('App is ready');
+
+  // Set COOP/COEP headers required for SharedArrayBuffer / WebContainer
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Cross-Origin-Opener-Policy': ['same-origin'],
+        'Cross-Origin-Embedder-Policy': ['require-corp'],
+      },
+    });
+  });
 
   // Load any existing cookies from ElectronStore, set as cookie
   await initCookies();
