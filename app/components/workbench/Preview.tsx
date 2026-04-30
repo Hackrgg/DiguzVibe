@@ -12,6 +12,7 @@ type ResizeSide = 'left' | 'right' | null;
 
 interface PreviewProps {
   setSelectedElement?: (element: ElementInfo | null) => void;
+  isVisible?: boolean;
 }
 
 interface WindowSize {
@@ -52,7 +53,7 @@ const WINDOW_SIZES: WindowSize[] = [
   { name: '4K Display', width: 3840, height: 2160, icon: 'i-ph:monitor', hasFrame: true, frameType: 'desktop' },
 ];
 
-export const Preview = memo(({ setSelectedElement }: PreviewProps) => {
+export const Preview = memo(({ setSelectedElement, isVisible }: PreviewProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,6 +103,17 @@ export const Preview = memo(({ setSelectedElement }: PreviewProps) => {
     setIframeUrl(baseUrl);
     setDisplayPath('/');
   }, [activePreview]);
+
+  const prevIsVisible = useRef<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    const wasHidden = prevIsVisible.current === false;
+    prevIsVisible.current = isVisible;
+
+    if (isVisible && wasHidden && iframeRef.current && iframeUrl) {
+      iframeRef.current.src = iframeUrl;
+    }
+  }, [isVisible, iframeUrl]);
 
   const findMinPortIndex = useCallback(
     (minIndex: number, preview: { port: number }, index: number, array: { port: number }[]) => {

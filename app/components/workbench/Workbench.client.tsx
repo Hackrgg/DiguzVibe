@@ -516,7 +516,7 @@ export const Workbench = memo(
                     <DiffView fileHistory={fileHistory} setFileHistory={setFileHistory} />
                   </View>
                   <View initial={{ x: '100%' }} animate={{ x: selectedView === 'preview' ? '0%' : '100%' }}>
-                    <Preview setSelectedElement={setSelectedElement} />
+                    <Preview setSelectedElement={setSelectedElement} isVisible={selectedView === 'preview'} />
                   </View>
                 </div>
               </div>
