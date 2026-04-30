@@ -76,8 +76,16 @@ declare global {
   await app.whenReady();
   console.log('App is ready');
 
-  // Set COOP/COEP headers required for SharedArrayBuffer / WebContainer
+  // Set COOP/COEP headers required for SharedArrayBuffer / WebContainer.
+  // Only inject on localhost — never on cross-origin responses (stackblitz.com iframe etc.)
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const isLocalhost = details.url.startsWith('http://localhost') || details.url.startsWith('https://localhost');
+
+    if (!isLocalhost) {
+      callback({ responseHeaders: details.responseHeaders });
+      return;
+    }
+
     callback({
       responseHeaders: {
         ...details.responseHeaders,

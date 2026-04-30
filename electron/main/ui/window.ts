@@ -40,6 +40,10 @@ export function createWindow(rendererURL: string) {
 
   win.webContents.on('did-finish-load', () => {
     console.log('Window finished loading');
+
+    if (isDev) {
+      win.webContents.openDevTools({ mode: 'detach' });
+    }
   });
 
   const boundsListener = () => {
