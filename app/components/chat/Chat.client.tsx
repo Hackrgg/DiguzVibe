@@ -416,6 +416,8 @@ export const ChatImpl = memo(
           autoClose: 5000,
           style: { fontFamily: "'Sora', sans-serif", fontWeight: 700 },
         });
+        setTimeout(() => setInput(messageContent), 0);
+
         return;
       }
 
