@@ -1,153 +1,102 @@
 #!/usr/bin/env node
 
-/**
- * Electron Development Script
- *
- * This script provides hot-reload development mode for Electron applications.
- * It automatically builds Electron dependencies, starts the Remix development server,
- * and launches the Electron application with hot-reload capabilities.
- */
-
-import { spawn, exec } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-// Get current file directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Constants
-const REMIX_PORT = 5173;
-const CHECK_INTERVAL = 1000;
-const MAX_RETRIES = 30;
-
-// Set environment variables
 process.env.NODE_ENV = 'development';
 
-console.log('🚀 Starting Electron hot-reload development mode...');
-console.log('🔧 Environment:', process.env.NODE_ENV);
+console.log('🚀 Starting DIGUZ Vibe Coder...');
 
 let electronProcess = null;
-let remixProcess = null;
 
-/**
- * Cleanup function to gracefully shutdown all processes
- */
 function cleanup() {
-  console.log('\n🛑 Shutting down all processes...');
-
   if (electronProcess) {
     electronProcess.kill('SIGTERM');
-  }
-
-  if (remixProcess) {
-    remixProcess.kill('SIGTERM');
   }
 
   process.exit(0);
 }
 
-// Handle process exit signals
 process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
 
 /**
- * Wait for a server to start on the specified port
- * @param {number} port - Port number to check
- * @param {string} serverName - Name of the server for logging
- * @returns {Promise<void>}
+ * Returns true if any source file is newer than the built output,
+ * meaning a rebuild is needed.
  */
-async function waitForServer(port, serverName) {
-  return new Promise((resolve, reject) => {
-    let retries = 0;
+function needsRebuild(srcGlobs, outFile) {
+  if (!fs.existsSync(outFile)) {
+    return true;
+  }
 
-    const checkServer = () => {
-      const cmd = process.platform === 'win32' ? `netstat -ano | findstr :${port}` : `lsof -i :${port}`;
-      exec(cmd, (error, stdout) => {
-        if (stdout && stdout.trim()) {
-          console.log(`✅ ${serverName} started`);
-          resolve();
-        } else if (retries >= MAX_RETRIES) {
-          reject(new Error(`Timeout waiting for ${serverName} to start`));
-        } else {
-          retries++;
-          setTimeout(checkServer, CHECK_INTERVAL);
-        }
-      });
-    };
+  const outMtime = fs.statSync(outFile).mtimeMs;
 
-    checkServer();
-  });
-}
+  for (const dir of srcGlobs) {
+    if (!fs.existsSync(dir)) {
+      continue;
+    }
 
-/**
- * Build Electron dependencies
- * @returns {Promise<void>}
- */
-async function buildElectronDeps() {
-  return new Promise((resolve, reject) => {
-    const buildProcess = spawn('npm', ['run', 'electron:build:deps'], {
-      stdio: 'inherit',
-      shell: true,
-      env: { ...process.env },
-    });
+    const files = fs.readdirSync(dir, { recursive: true });
 
-    buildProcess.on('close', (code) => {
-      if (code === 0) {
-        console.log('✅ Electron dependencies built successfully');
-        resolve();
-      } else {
-        reject(new Error(`Build failed with exit code: ${code}`));
+    for (const f of files) {
+      const full = path.join(dir, f.toString());
+
+      if (fs.statSync(full).isFile() && fs.statSync(full).mtimeMs > outMtime) {
+        return true;
       }
-    });
+    }
+  }
 
-    buildProcess.on('error', (error) => {
-      reject(new Error(`Build process error: ${error.message}`));
-    });
+  return false;
+}
+
+async function buildIfNeeded(name, cmd, srcDirs, outFile) {
+  if (!needsRebuild(srcDirs, outFile)) {
+    console.log(`⚡ ${name} already up to date, skipping build`);
+    return;
+  }
+
+  console.log(`📦 Building ${name}...`);
+
+  return new Promise((resolve, reject) => {
+    const p = spawn('npm', ['run', cmd], { stdio: 'inherit', shell: true, env: { ...process.env } });
+    p.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`${name} build failed (${code})`))));
+    p.on('error', reject);
   });
 }
 
-/**
- * Main function to start Electron development mode
- * @returns {Promise<void>}
- */
 async function startElectronDev() {
   try {
-    // 1. Build Electron dependencies first
-    console.log('📦 Building Electron dependencies...');
-    await buildElectronDeps();
+    const root = path.join(__dirname, '..');
 
-    // 2. Start Remix development server
-    console.log('🌐 Starting Remix development server...');
-    remixProcess = spawn('npm', ['run', 'dev'], {
-      stdio: 'pipe',
-      shell: true,
-      env: { ...process.env },
-    });
+    await buildIfNeeded(
+      'electron main',
+      'electron:build:main',
+      [path.join(root, 'electron', 'main')],
+      path.join(root, 'build', 'electron', 'main', 'index.mjs'),
+    );
 
-    remixProcess.stdout.on('data', (data) => {
-      const output = data.toString();
-      console.log(`[Remix] ${output.trim()}`);
-    });
+    await buildIfNeeded(
+      'electron preload',
+      'electron:build:preload',
+      [path.join(root, 'electron', 'preload')],
+      path.join(root, 'build', 'electron', 'preload', 'index.cjs'),
+    );
 
-    remixProcess.stderr.on('data', (data) => {
-      console.error(`[Remix Error] ${data.toString().trim()}`);
-    });
-
-    // Wait for Remix server to start
-    await waitForServer(REMIX_PORT, 'Remix development server');
-
-    // 3. Start Electron application
-    console.log('⚡ Starting Electron application...');
+    console.log('⚡ Launching Electron...');
 
     const electronPath =
       process.platform === 'win32'
-        ? path.join(__dirname, '..', 'node_modules', 'electron', 'dist', 'electron.exe')
-        : path.join(__dirname, '..', 'node_modules', '.bin', 'electron');
-    const mainPath = path.join(__dirname, '..', 'build', 'electron', 'main', 'index.mjs');
+        ? path.join(root, 'node_modules', 'electron', 'dist', 'electron.exe')
+        : path.join(root, 'node_modules', '.bin', 'electron');
 
-    // Check if main process file exists
+    const mainPath = path.join(root, 'build', 'electron', 'main', 'index.mjs');
+
     if (!fs.existsSync(mainPath)) {
       throw new Error(`Main process file not found: ${mainPath}`);
     }
@@ -155,32 +104,26 @@ async function startElectronDev() {
     const electronEnv = { ...process.env, NODE_ENV: 'development', ELECTRON_IS_DEV: '1' };
     delete electronEnv.ELECTRON_RUN_AS_NODE;
 
-    electronProcess = spawn(electronPath, [mainPath], {
-      stdio: 'inherit',
-      env: electronEnv,
-    });
+    electronProcess = spawn(electronPath, [mainPath], { stdio: 'inherit', env: electronEnv });
 
-    electronProcess.on('error', (error) => {
-      console.error('❌ Failed to start Electron:', error);
+    electronProcess.on('error', (err) => {
+      console.error('❌ Failed to start Electron:', err);
       cleanup();
     });
 
     electronProcess.on('exit', (code) => {
-      console.log(`📱 Electron process exited with code: ${code}`);
+      console.log(`Electron exited (${code})`);
 
       if (code !== 0) {
         cleanup();
       }
     });
 
-    console.log('🎉 Electron hot-reload development mode started!');
-    console.log('💡 Code changes will automatically reload');
-    console.log('🛑 Press Ctrl+C to exit');
-  } catch (error) {
-    console.error('❌ Startup failed:', error.message);
+    console.log('✅ App started — Ctrl+C to exit');
+  } catch (err) {
+    console.error('❌ Startup failed:', err.message);
     cleanup();
   }
 }
 
-// Start development mode
 startElectronDev();
