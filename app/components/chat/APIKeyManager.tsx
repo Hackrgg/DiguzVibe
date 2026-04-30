@@ -104,8 +104,8 @@ export const APIKeyManager: React.FC<APIKeyManagerProps> = ({ provider, apiKey, 
                 </>
               ) : (
                 <>
-                  <div className="i-ph:x-circle-fill text-red-500 w-4 h-4" />
-                  <span className="text-xs text-red-500">Not Set (Please set via UI or ENV_VAR)</span>
+                  <div className="i-ph:key-fill text-bolt-elements-textTertiary w-4 h-4" />
+                  <span className="text-xs text-bolt-elements-textTertiary">Click to insert your API key</span>
                 </>
               )}
             </div>

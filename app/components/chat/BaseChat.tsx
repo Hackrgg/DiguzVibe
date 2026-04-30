@@ -30,6 +30,7 @@ import { expoUrlAtom } from '~/lib/stores/qrCodeStore';
 import { useStore } from '@nanostores/react';
 import { StickToBottom, useStickToBottomContext } from '~/lib/hooks';
 import { ChatBox } from './ChatBox';
+import { ControlPanel } from '~/components/@settings/core/ControlPanel';
 import type { DesignScheme } from '~/types/design-scheme';
 import type { ElementInfo } from '~/components/workbench/Inspector';
 import LlmErrorAlert from './LLMApiAlert';
@@ -75,6 +76,7 @@ interface BaseChatProps {
   data?: JSONValue[] | undefined;
   chatMode?: 'discuss' | 'build';
   setChatMode?: (mode: 'discuss' | 'build') => void;
+  onImplementPlan?: () => void;
   append?: (message: Message) => void;
   designScheme?: DesignScheme;
   setDesignScheme?: (scheme: DesignScheme) => void;
@@ -123,6 +125,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       data,
       chatMode,
       setChatMode,
+      onImplementPlan,
       append,
       designScheme,
       setDesignScheme,
@@ -146,6 +149,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
     const [progressAnnotations, setProgressAnnotations] = useState<ProgressAnnotation[]>([]);
     const expoUrl = useStore(expoUrlAtom);
     const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     useEffect(() => {
       if (expoUrl) {
@@ -442,9 +446,34 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                 >
                   Build something <span style={{ color: '#e97ab2' }}>real.</span>
                 </h1>
-                <p className="text-md lg:text-xl mb-8 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
+                <p className="text-md lg:text-xl mb-6 text-bolt-elements-textSecondary animate-fade-in animation-delay-200">
                   Describe what you want — DIGUZ turns it into a working app.
                 </p>
+                {/* Mode toggle */}
+                <div className="flex items-center justify-center gap-0 mb-6 animate-fade-in animation-delay-300">
+                  <button
+                    onClick={() => setChatMode?.('build')}
+                    className="px-6 py-2 text-sm font-black tracking-[0.12em] uppercase border-2 border-[rgba(44,35,28,0.85)] transition-all"
+                    style={{
+                      background: chatMode !== 'discuss' ? '#1c1712' : 'transparent',
+                      color: chatMode !== 'discuss' ? '#f6eff3' : 'rgba(44,35,28,0.5)',
+                      fontFamily: "'Sora', sans-serif",
+                    }}
+                  >
+                    Build
+                  </button>
+                  <button
+                    onClick={() => setChatMode?.('discuss')}
+                    className="px-6 py-2 text-sm font-black tracking-[0.12em] uppercase border-2 border-l-0 border-[rgba(44,35,28,0.85)] transition-all"
+                    style={{
+                      background: chatMode === 'discuss' ? '#e97ab2' : 'transparent',
+                      color: chatMode === 'discuss' ? '#fff' : 'rgba(44,35,28,0.5)',
+                      fontFamily: "'Sora', sans-serif",
+                    }}
+                  >
+                    Plan
+                  </button>
+                </div>
               </div>
             )}
             <StickToBottom
@@ -513,7 +542,24 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   {llmErrorAlert && <LlmErrorAlert alert={llmErrorAlert} clearAlert={() => clearLlmErrorAlert?.()} />}
                 </div>
                 {progressAnnotations && <ProgressCompilation data={progressAnnotations} />}
+                {chatStarted && chatMode === 'discuss' && (
+                  <button
+                    onClick={onImplementPlan}
+                    className="w-full flex items-center justify-center gap-3 py-3 px-6 border-2 border-[rgba(44,35,28,0.85)] transition-all hover:opacity-90 active:scale-[0.99]"
+                    style={{
+                      background: '#e97ab2',
+                      color: '#fff',
+                      fontFamily: "'Sora', sans-serif",
+                      boxShadow: '4px 4px 0 rgba(44,35,28,0.35)',
+                    }}
+                  >
+                    <span className="i-ph:rocket-launch-bold text-xl" />
+                    <span className="font-black tracking-[0.12em] uppercase text-sm">Implement this Plan</span>
+                    <span className="i-ph:arrow-right-bold text-lg" />
+                  </button>
+                )}
                 <ChatBox
+                  onSettingsClick={() => setIsSettingsOpen(true)}
                   isModelSettingsCollapsed={isModelSettingsCollapsed}
                   setIsModelSettingsCollapsed={setIsModelSettingsCollapsed}
                   provider={provider}
@@ -588,7 +634,12 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       </div>
     );
 
-    return <Tooltip.Provider delayDuration={200}>{baseChat}</Tooltip.Provider>;
+    return (
+      <Tooltip.Provider delayDuration={200}>
+        {baseChat}
+        <ControlPanel open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      </Tooltip.Provider>
+    );
   },
 );
 

@@ -9,6 +9,7 @@ import { description, useChatHistory } from '~/lib/persistence';
 import { chatStore } from '~/lib/stores/chat';
 import { workbenchStore } from '~/lib/stores/workbench';
 import { DEFAULT_MODEL, DEFAULT_PROVIDER, PROMPT_COOKIE_KEY, PROVIDER_LIST } from '~/utils/constants';
+import { LOCAL_PROVIDERS } from '~/lib/stores/settings';
 import { cubicEasingFn } from '~/utils/easings';
 import { createScopedLogger, renderLogger } from '~/utils/logger';
 import { BaseChat } from './BaseChat';
@@ -406,6 +407,18 @@ export const ChatImpl = memo(
         return;
       }
 
+      const needsApiKey = !LOCAL_PROVIDERS.includes(provider.name);
+      const hasApiKey = !!apiKeys[provider.name];
+
+      if (needsApiKey && !hasApiKey) {
+        toast.error(`No ${provider.name} API key — enter it in the chat box below the model selector`, {
+          position: 'top-center',
+          autoClose: 5000,
+          style: { fontFamily: "'Sora', sans-serif", fontWeight: 700 },
+        });
+        return;
+      }
+
       let finalMessageContent = messageContent;
 
       if (selectedElement) {
@@ -616,6 +629,26 @@ export const ChatImpl = memo(
       [input, handleInputChange],
     );
 
+    const handleImplementPlan = useCallback(() => {
+      const needsApiKey = !LOCAL_PROVIDERS.includes(provider.name);
+      const hasApiKey = !!apiKeys[provider.name];
+
+      if (needsApiKey && !hasApiKey) {
+        toast.error(`No ${provider.name} API key — enter it in the chat box below the model selector`, {
+          position: 'top-center',
+          autoClose: 5000,
+          style: { fontFamily: "'Sora', sans-serif", fontWeight: 700 },
+        });
+        return;
+      }
+
+      setChatMode('build');
+      append({
+        role: 'user',
+        content: `[Model: ${model}]\n\n[Provider: ${provider.name}]\n\nWe've finished planning. Now implement everything we discussed above. Build it exactly as we planned.`,
+      });
+    }, [setChatMode, append, model, provider, apiKeys]);
+
     return (
       <BaseChat
         ref={animationScope}
@@ -680,6 +713,7 @@ export const ChatImpl = memo(
         data={chatData}
         chatMode={chatMode}
         setChatMode={setChatMode}
+        onImplementPlan={handleImplementPlan}
         append={append}
         designScheme={designScheme}
         setDesignScheme={setDesignScheme}

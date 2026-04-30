@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useStore } from '@nanostores/react';
 import { ClientOnly } from 'remix-utils/client-only';
 import { chatStore } from '~/lib/stores/chat';
@@ -7,32 +6,22 @@ import { ChatDescription } from '~/lib/persistence/ChatDescription.client';
 
 export function Header() {
   const chat = useStore(chatStore);
-  const [announceHovered, setAnnounceHovered] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b-2 border-[rgba(44,35,28,0.9)] bg-[rgba(246,239,227,0.95)] backdrop-blur-md">
-      {/* Black announce bar — exact diguz.com top strip */}
-      <a
-        href="https://diguz.com"
-        target="_blank"
-        rel="noreferrer"
-        onMouseEnter={() => setAnnounceHovered(true)}
-        onMouseLeave={() => setAnnounceHovered(false)}
-        className="block border-b border-[rgba(44,35,28,0.15)] py-2 text-center font-mono text-[11px] uppercase tracking-[0.12em] whitespace-nowrap overflow-hidden cursor-pointer transition-all duration-300"
-        style={{ background: announceHovered ? '#e97ab2' : '#1c1712' }}
+      {/* Announce bar */}
+      <div
+        className="block border-b border-[rgba(44,35,28,0.15)] py-2 text-center font-mono text-[11px] uppercase tracking-[0.12em] whitespace-nowrap overflow-hidden"
+        style={{ background: '#1c1712' }}
       >
-        {!announceHovered ? (
-          <span className="flex items-center justify-center gap-3">
-            <span className="text-[#67baa8]">→</span>
-            <span className="text-[#e7c768]">→</span>
-            <span className="font-black tracking-[0.18em] text-[#e97ab2]">DIGUZ VIBE CODER</span>
-            <span className="text-[#e7c768]">←</span>
-            <span className="text-[#67baa8]">←</span>
-          </span>
-        ) : (
-          <span className="text-black font-black tracking-[0.12em]">Back to diguz.com →</span>
-        )}
-      </a>
+        <span className="flex items-center justify-center gap-3">
+          <span className="text-[#67baa8]">→</span>
+          <span className="text-[#e7c768]">→</span>
+          <span className="font-black tracking-[0.18em] text-[#e97ab2]">DIGUZ VIBE CODER</span>
+          <span className="text-[#e7c768]">←</span>
+          <span className="text-[#67baa8]">←</span>
+        </span>
+      </div>
 
       {/* Main nav bar */}
       <div className="flex items-center w-full px-5 py-3 sm:px-8 lg:px-10 relative">

@@ -42,11 +42,6 @@ export function createWindow(rendererURL: string) {
     console.log('Window finished loading');
   });
 
-  // Open devtools in development
-  if (isDev) {
-    win.webContents.openDevTools();
-  }
-
   const boundsListener = () => {
     const bounds = win.getBounds();
     store.set('bounds', bounds);

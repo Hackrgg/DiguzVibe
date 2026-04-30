@@ -23,6 +23,7 @@ import { McpTools } from './MCPTools';
 import { WebSearch } from './WebSearch.client';
 
 interface ChatBoxProps {
+  onSettingsClick?: () => void;
   isModelSettingsCollapsed: boolean;
   setIsModelSettingsCollapsed: (collapsed: boolean) => void;
   provider: any;
@@ -237,7 +238,11 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
             minHeight: props.TEXTAREA_MIN_HEIGHT,
             maxHeight: props.TEXTAREA_MAX_HEIGHT,
           }}
-          placeholder={props.chatMode === 'build' ? 'How can Bolt help you today?' : 'What would you like to discuss?'}
+          placeholder={
+            props.chatMode === 'discuss'
+              ? 'Describe your idea — brainstorm and plan with DIGUZ...'
+              : 'How can DIGUZ help you today?'
+          }
           translate="no"
         />
         <ClientOnly>
@@ -262,6 +267,9 @@ export const ChatBox: React.FC<ChatBoxProps> = (props) => {
         <div className="flex justify-between items-center text-sm p-4 pt-2">
           <div className="flex gap-1 items-center">
             <ColorSchemeDialog designScheme={props.designScheme} setDesignScheme={props.setDesignScheme} />
+            <IconButton title="Settings" className="transition-all" onClick={() => props.onSettingsClick?.()}>
+              <div className="i-ph:gear text-xl" />
+            </IconButton>
             <McpTools />
             <IconButton title="Upload file" className="transition-all" onClick={() => props.handleFileUpload()}>
               <div className="i-ph:paperclip text-xl"></div>
