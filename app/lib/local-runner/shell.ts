@@ -120,8 +120,8 @@ export class LocalBoltShell {
       this.#terminal!.write(`\r\n$ ${command}\r\n`);
 
       const isWin = this.#container!.platform === 'win32';
-      const shellCmd = isWin ? 'powershell.exe' : 'sh';
-      const shellArgs = isWin ? ['-NoProfile', '-NonInteractive', '-Command', command] : ['-c', command];
+      const shellCmd = isWin ? 'cmd.exe' : 'sh';
+      const shellArgs = isWin ? ['/c', command] : ['-c', command];
 
       const proc = await this.#container!.spawn(shellCmd, shellArgs, {
         cwd: this.#container!.workdir,

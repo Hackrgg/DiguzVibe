@@ -52,6 +52,7 @@ let nextPid = 1;
 
 export function setupLocalRunnerHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle('local-runner:info', async () => {
+    console.log('[LocalRunner] getInfo called');
     const realWorkDir = getRealWorkDir();
     await fs.mkdir(realWorkDir, { recursive: true });
 
@@ -70,7 +71,9 @@ export function setupLocalRunnerHandlers(mainWindow: BrowserWindow) {
   });
 
   ipcMain.handle('local-runner:fs:writeFile', async (_, { path: vPath, content, encoding }) => {
+    console.log('[LocalRunner] writeFile:', vPath);
     const realPath = toRealPath(vPath);
+    console.log('[LocalRunner] realPath:', realPath);
     await fs.mkdir(nodePath.dirname(realPath), { recursive: true });
 
     if (Array.isArray(content)) {
@@ -163,14 +166,9 @@ export function setupLocalRunnerHandlers(mainWindow: BrowserWindow) {
         resolvedArgs = ['--rcfile', '/dev/stdin', '-i'];
       }
     } else if (command === 'sh' && process.platform === 'win32') {
-      // Translate sh -c "cmd" to PowerShell on Windows
-      resolvedCmd = 'powershell.exe';
-
-      if (args?.[0] === '-c' && args[1]) {
-        resolvedArgs = ['-NoProfile', '-NonInteractive', '-Command', args[1]];
-      } else {
-        resolvedArgs = ['-NoProfile', '-NonInteractive', ...(args ?? [])];
-      }
+      // sh -c is not available on Windows — translate to cmd.exe /c
+      resolvedCmd = 'cmd.exe';
+      resolvedArgs = args?.[0] === '-c' && args[1] ? ['/c', args[1]] : ['/c', ...(args ?? [])];
     } else {
       const ext = process.platform === 'win32' && !command.includes('.') ? '.cmd' : '';
       resolvedCmd = command + ext;
