@@ -115,6 +115,36 @@ export const Preview = memo(({ setSelectedElement, isVisible }: PreviewProps) =>
     }
   }, [isVisible, iframeUrl]);
 
+  useEffect(() => {
+    const lr = (window as any).localRunner;
+
+    if (!lr) {
+      return undefined;
+    }
+
+    let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const cleanup = lr.onWatchEvent((events: { type: string; path: string }[]) => {
+      const hasContent = events.some((e) => e.type === 'change' || e.type === 'add_file');
+
+      if (!hasContent) {
+        return;
+      }
+
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (iframeRef.current) {
+          iframeRef.current.src = iframeRef.current.src;
+        }
+      }, 300);
+    });
+
+    return () => {
+      cleanup();
+      clearTimeout(debounceTimer);
+    };
+  }, []);
+
   const findMinPortIndex = useCallback(
     (minIndex: number, preview: { port: number }, index: number, array: { port: number }[]) => {
       return preview.port < array[minIndex].port ? index : minIndex;

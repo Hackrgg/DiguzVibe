@@ -211,7 +211,17 @@ export class PreviewsStore {
   // Helper to extract preview ID from URL
   getPreviewId(url: string): string | null {
     const match = url.match(/^https?:\/\/([^.]+)\.local-credentialless\.webcontainer-api\.io/);
-    return match ? match[1] : null;
+
+    if (match) {
+      return match[1];
+    }
+
+    // Local runner static server — treat as a single stable preview ID
+    if (/^https?:\/\/127\.0\.0\.1:\d+/.test(url)) {
+      return 'local';
+    }
+
+    return null;
   }
 
   // Broadcast state change to all tabs
