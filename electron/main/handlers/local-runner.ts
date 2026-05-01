@@ -3,7 +3,28 @@ import * as fs from 'node:fs/promises';
 import * as nodePath from 'node:path';
 import { watch as fsWatch } from 'node:fs';
 import { spawn } from 'node:child_process';
+import { createServer } from 'node:http';
 import type { BrowserWindow } from 'electron';
+
+const MIME_TYPES: Record<string, string> = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.mjs': 'application/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.txt': 'text/plain',
+  '.xml': 'application/xml',
+  '.webp': 'image/webp',
+};
 
 const VIRTUAL_WORK_DIR = '/home/project';
 
@@ -50,13 +71,74 @@ const processes = new Map<
 >();
 let nextPid = 1;
 
+let staticServerPort: number | null = null;
+
+async function ensureStaticServer(): Promise<number> {
+  if (staticServerPort !== null) {
+    return staticServerPort;
+  }
+
+  const realWorkDir = getRealWorkDir();
+
+  return new Promise((resolve, reject) => {
+    const server = createServer(async (req, res) => {
+      let urlPath = req.url ?? '/';
+
+      if (urlPath.includes('?')) {
+        urlPath = urlPath.slice(0, urlPath.indexOf('?'));
+      }
+
+      const decoded = decodeURIComponent(urlPath);
+      const safePath = decoded.replace(/\.\./g, '').replace(/^\/+/, '');
+      let filePath = nodePath.join(realWorkDir, safePath);
+
+      try {
+        const stat = await fs.stat(filePath);
+
+        if (stat.isDirectory()) {
+          filePath = nodePath.join(filePath, 'index.html');
+        }
+      } catch {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+      }
+
+      try {
+        const content = await fs.readFile(filePath);
+        const ext = nodePath.extname(filePath).toLowerCase();
+        const mime = MIME_TYPES[ext] ?? 'application/octet-stream';
+        res.writeHead(200, { 'Content-Type': mime });
+        res.end(content);
+      } catch {
+        res.writeHead(404);
+        res.end('Not found');
+      }
+    });
+
+    server.listen(0, '127.0.0.1', () => {
+      const addr = server.address();
+      const port = typeof addr === 'object' && addr ? addr.port : 0;
+      staticServerPort = port;
+      resolve(port);
+    });
+
+    server.on('error', reject);
+  });
+}
+
 export function setupLocalRunnerHandlers(mainWindow: BrowserWindow) {
   ipcMain.handle('local-runner:info', async () => {
-    console.log('[LocalRunner] getInfo called');
     const realWorkDir = getRealWorkDir();
     await fs.mkdir(realWorkDir, { recursive: true });
 
-    return { workdir: VIRTUAL_WORK_DIR, realWorkdir: realWorkDir, platform: process.platform };
+    const port = await ensureStaticServer();
+    const staticServerUrl = `http://127.0.0.1:${port}`;
+
+    // Notify renderer that the static file server is ready for previewing
+    mainWindow.webContents.send('local-runner:server-ready', { pid: 0, port, url: staticServerUrl });
+
+    return { workdir: VIRTUAL_WORK_DIR, realWorkdir: realWorkDir, platform: process.platform, staticServerPort: port };
   });
 
   ipcMain.handle('local-runner:fs:readFile', async (_, { path: vPath, encoding }) => {

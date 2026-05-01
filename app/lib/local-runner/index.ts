@@ -8,7 +8,7 @@
 declare global {
   interface Window {
     localRunner?: {
-      getInfo(): Promise<{ workdir: string; realWorkdir: string; platform: string }>;
+      getInfo(): Promise<{ workdir: string; realWorkdir: string; platform: string; staticServerPort?: number }>;
       fsReadFile(path: string, encoding?: string): Promise<string | number[]>;
       fsWriteFile(path: string, content: string | number[], encoding?: string): Promise<void>;
       fsMkdir(path: string, options?: { recursive?: boolean }): Promise<void>;
