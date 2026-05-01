@@ -117,11 +117,14 @@ export class LocalBoltShell {
     let exitCode = 0;
 
     const executionPromise = (async () => {
-      this.#terminal!.write(`\r\n$ ${command}\r\n`);
+      // Strip accidental "Command: " or "command: " prefix some LLMs emit
+      const cleanCommand = command.replace(/^command:\s*/i, '').trim();
+
+      this.#terminal!.write(`\r\n$ ${cleanCommand}\r\n`);
 
       const isWin = this.#container!.platform === 'win32';
       const shellCmd = isWin ? 'cmd.exe' : 'sh';
-      const shellArgs = isWin ? ['/c', command] : ['-c', command];
+      const shellArgs = isWin ? ['/c', cleanCommand] : ['-c', cleanCommand];
 
       const proc = await this.#container!.spawn(shellCmd, shellArgs, {
         cwd: this.#container!.workdir,
@@ -146,6 +149,14 @@ export class LocalBoltShell {
         output = cleanTerminalOutput(output);
       } catch {
         // keep raw output if cleanup fails
+      }
+
+      /*
+       * If npm/npx fails only because there's no package.json (plain HTML project),
+       * treat it as success so the static file server preview still loads.
+       */
+      if (exitCode !== 0 && output.includes('Could not read package.json')) {
+        exitCode = 0;
       }
 
       return { output, exitCode };

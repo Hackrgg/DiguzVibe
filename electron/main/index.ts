@@ -105,6 +105,21 @@ declare global {
     console.log('Handling request for:', req.url);
 
     if (isDev) {
+      const url = new URL(req.url);
+
+      // Non-localhost requests (e.g. 127.0.0.1 static preview server) — forward directly
+      if (url.hostname !== 'localhost') {
+        console.log('Dev mode: forwarding non-localhost request:', req.url);
+
+        const proxyReq = new Request(req.url, {
+          method: req.method,
+          headers: req.headers,
+          body: req.method !== 'GET' && req.method !== 'HEAD' ? req.body : undefined,
+        });
+
+        return await fetch(proxyReq);
+      }
+
       console.log('Dev mode: forwarding to vite server');
       return await fetch(req);
     }

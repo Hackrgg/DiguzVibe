@@ -108,7 +108,12 @@ async function ensureStaticServer(): Promise<number> {
         const content = await fs.readFile(filePath);
         const ext = nodePath.extname(filePath).toLowerCase();
         const mime = MIME_TYPES[ext] ?? 'application/octet-stream';
-        res.writeHead(200, { 'Content-Type': mime });
+        res.writeHead(200, {
+          'Content-Type': mime,
+          'Cross-Origin-Resource-Policy': 'cross-origin',
+          'Cross-Origin-Embedder-Policy': 'unsafe-none',
+          'Access-Control-Allow-Origin': '*',
+        });
         res.end(content);
       } catch {
         res.writeHead(404);
