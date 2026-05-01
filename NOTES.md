@@ -7,22 +7,27 @@
 ---
 
 #### 1. Removed DevTools auto-open (`electron/main/ui/window.ts`)
+
 The Electron window was opening Chrome DevTools on every launch in dev mode. Removed that block — app now opens clean.
 
 ---
 
 #### 2. Header branding (`app/components/header/Header.tsx`)
+
 The logo used to show "back to diguz.com" on hover and link away. Replaced it with a static DIGUZ VIBE CODER lockup that always shows the brand and never navigates away. Removed the hover state entirely.
 
 ---
 
 #### 3. API key prompt UX (`app/components/chat/APIKeyManager.tsx`)
+
 The "Not Set" state used to show a red error label. Changed it to a neutral grey "Click to insert your API key" prompt with a key icon — less alarming, more inviting.
 
 ---
 
 #### 4. Sidebar retheme (`app/components/sidebar/Menu.client.tsx`)
+
 The sidebar was using bolt.diy's default dark/grey palette. Rethemed to match the Diguz design:
+
 - Background: cream `#f6eff3`
 - Borders: dark brown `rgba(44,35,28,0.9)`
 - New Chat button: pink `#e97ab2`
@@ -33,15 +38,18 @@ The sidebar was using bolt.diy's default dark/grey palette. Rethemed to match th
 ---
 
 #### 5. Build / Plan mode toggle (`app/components/chat/BaseChat.tsx`)
+
 Added a BUILD | PLAN toggle on the home screen (above the chat input, only shown before a chat starts). BUILD = normal code generation mode. PLAN = discuss/brainstorm mode with no code output.
 
 When the user is in PLAN mode and has been chatting, an **"Implement this Plan"** button appears above the input. Clicking it:
+
 - Switches mode to BUILD
 - Auto-sends a message telling the AI to implement everything discussed
 
 ---
 
 #### 6. API key guard before send (`app/components/chat/Chat.client.tsx`)
+
 Added a check at the top of `sendMessage`: if the selected provider needs an API key and none is set, the message is blocked and a toast is shown pointing the user to the key input. Local providers (Ollama, LMStudio, OpenAILike) bypass this check since they don't need keys.
 
 Same guard runs when the user clicks "Implement this Plan".
@@ -49,18 +57,20 @@ Same guard runs when the user clicks "Implement this Plan".
 ---
 
 #### 7. Settings gear in chat toolbar (`app/components/chat/ChatBox.tsx`)
+
 Settings were buried in the sidebar and not accessible during a chat. Added a gear icon button to the left side of the chat toolbar (next to the MCP icon). Clicking it opens the full Settings panel as a modal from inside the chat — no need to go back to the sidebar.
 
 ---
 
 #### 8. MCP Server Presets gallery (`app/components/@settings/tabs/mcp/McpTab.tsx`)
+
 Added a collapsible **Server Presets** section at the top of the MCP settings tab. 10 pre-configured servers in three tiers:
 
-| Tier | Servers |
-|---|---|
+| Tier              | Servers                                                           |
+| ----------------- | ----------------------------------------------------------------- |
 | Free / no API key | Context7, Playwright, Chrome DevTools, Filesystem, Shell/Terminal |
-| Requires API key | Netlify, Neon Postgres, Convex, Browserbase |
-| PC Control | computer-use-mcp |
+| Requires API key  | Netlify, Neon Postgres, Convex, Browserbase                       |
+| PC Control        | computer-use-mcp                                                  |
 
 Clicking **+ Add** merges the server config into the JSON editor (with placeholder values for anything that needs a key). Duplicate detection warns instead of overwriting. User edits placeholders → Save → server is live.
 

@@ -48,6 +48,7 @@ export class LocalContainer {
   platform: string = 'linux';
 
   #eventHandlers = new Map<string, Set<EventHandler>>();
+  #bufferedEvents = new Map<string, any[][]>();
   #globalServerReadyUnsub?: () => void;
   #infoLoaded: Promise<void>;
 
@@ -161,6 +162,17 @@ export class LocalContainer {
       .getInfo()
       .then((info) => {
         this.platform = info.platform;
+
+        /*
+         * Emit static file server as the default preview endpoint.
+         * Done here (in renderer Promise resolution) rather than via IPC push so
+         * that PreviewsStore's `port` listener is always registered before we fire.
+         */
+        if (info.staticServerPort) {
+          const port = info.staticServerPort;
+          self.#emit('server-ready', port, `http://127.0.0.1:${port}`);
+          self.#emit('port', port, 'open', `http://127.0.0.1:${port}`);
+        }
       })
       .catch((_err) => {
         // ignore info load failure — defaults remain
@@ -182,6 +194,14 @@ export class LocalContainer {
     }
 
     this.#eventHandlers.get(event)!.add(handler);
+
+    // Replay any events that fired before this listener registered
+    const buffered = this.#bufferedEvents.get(event);
+
+    if (buffered?.length) {
+      buffered.forEach((args) => handler(...args));
+      this.#bufferedEvents.delete(event);
+    }
   }
 
   off(event: string, handler: EventHandler): void {
@@ -189,7 +209,16 @@ export class LocalContainer {
   }
 
   #emit(event: string, ...args: any[]): void {
-    this.#eventHandlers.get(event)?.forEach((h) => h(...args));
+    const handlers = this.#eventHandlers.get(event);
+
+    if (handlers?.size) {
+      handlers.forEach((h) => h(...args));
+    } else {
+      // No listeners yet — buffer so they get replayed on first on()
+      const buf = this.#bufferedEvents.get(event) ?? [];
+      buf.push(args);
+      this.#bufferedEvents.set(event, buf);
+    }
   }
 
   async setPreviewScript(_script: string): Promise<void> {

@@ -1,4 +1,5 @@
 # Dyad UI/UX Observations — Reference for DIGUZ Revamp
+
 > Compiled from two batches of Dyad screenshots. Use this as the design brief when rebuilding the frontend.
 
 ---
@@ -6,6 +7,7 @@
 ## 1. Overall Shell / Layout
 
 ### The 3-panel structure
+
 ```
 [ Icon Rail 48px ] [ Context Panel 240px ] [ Center: Chat ] [ Right Panel 280px + icon strip ]
 ```
@@ -16,6 +18,7 @@
 - **Right Panel (icon strip + content):** 6 icon tabs stacked vertically on far right edge. Content fills the panel to the left of those icons. Panel can be toggled open/closed with a button at top of chat.
 
 ### Titlebar
+
 - Shows current app name: `App: busy-iguana-nu...` on the left
 - App tabs appear as browser-style tabs across the top (with X to close)
 - Minimize / maximize / close window controls top right
@@ -24,14 +27,14 @@
 
 ## 2. Left Icon Rail — Navigation Items
 
-| Icon | Label | What it shows |
-|---|---|---|
-| House | Apps | App list + search + New App button |
-| Chat bubble | Chat | Recent chats list + search + New Chat |
-| Gear | Settings | Full settings nav panel |
-| Book | Library | (templates / saved) |
-| Grid/box | Hub | MCP Hub (server marketplace) |
-| Question | Help | Help resources |
+| Icon        | Label    | What it shows                         |
+| ----------- | -------- | ------------------------------------- |
+| House       | Apps     | App list + search + New App button    |
+| Chat bubble | Chat     | Recent chats list + search + New Chat |
+| Gear        | Settings | Full settings nav panel               |
+| Book        | Library  | (templates / saved)                   |
+| Grid/box    | Hub      | MCP Hub (server marketplace)          |
+| Question    | Help     | Help resources                        |
 
 ---
 
@@ -65,21 +68,26 @@
 ## 5. Chat Panel (While App Is Active)
 
 ### Top bar of chat
+
 - `+ New Chat` button (left)
 - `⏱ Version 1` — version counter with history icon (clicking shows version history)
 - `⊞` toggle icon (right) — shows/hides the right panel
 
 ### Chat message style
+
 - User messages: rounded pill/bubble, right-aligned, brand accent color background
 - AI messages: left-aligned, plain text + file cards
 
 ### File write cards (KEY FEATURE — we don't have this)
+
 Each file the AI writes appears as a card in the message:
+
 ```
 [ pencil icon ] globals.css                    [ Edit ] [ > ]
                 src/globals.css
                 Summary: Update global CSS with Shoester black and yellow theme
 ```
+
 - Icon indicates file type (pencil = edit, could be others for create/delete)
 - Filename bold, path below in grey
 - "Edit" button — opens file directly in Code tab
@@ -87,24 +95,30 @@ Each file the AI writes appears as a card in the message:
 - Multiple cards stack vertically per AI turn
 
 ### Progress / Task tracker (below messages, above input)
+
 ```
 [ spinner ] Create main landing page with hero section  (0/4)  [ ˅ ]
 ```
+
 - Collapsible — shows subtasks when expanded
 - Progress fraction `(0/4)` = subtasks complete / total
 - Spinner while in progress, checkmark when done
 
 ### "Channeling..." / "Distilling..." / "Crafting..." status
+
 - AI shows a status word while thinking, with animated bars (like audio waveform)
 - Timestamp: "less than a minute ago"
 
 ### Notification prompt (dismissible)
+
 ```
 [ 🔔 ] Get notified about chat events.    [ Enable ]    [ × ]
 ```
+
 - Appears in chat area above input, can be dismissed
 
 ### Input box
+
 - Placeholder: "Ask Dyad to build..."
 - Left: `⚒ Basic Agent` mode selector | `Model: Auto` selector | `✦ Pro` badge
 - Right: mic icon, send arrow, `+` for attachments
@@ -117,18 +131,22 @@ Each file the AI writes appears as a card in the message:
 Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 
 ### Preview tab
+
 - Full iframe of the running app
 - Toolbar at top: selector tool, magic wand, pencil, back, forward, refresh, `/` path input, branch/version selector, `⏻ Restart`, open in browser, screenshot
 - System Messages panel at bottom: shows `[DEBUG] [vite] connected`, `[DEBUG] [dyad-screenshot] Screenshot captured successfully` etc.
 
 ### Problems tab
+
 - Build errors, console errors — think of it as the terminal/errors view
 
 ### Code tab
+
 - File tree + code editor (inline, not separate workbench)
 - AI-modified files highlighted
 
 ### Configure tab
+
 - **Environment Variables** section:
   - "Local" badge (stored locally, not in repo)
   - `+ Add Environment Variable` button
@@ -140,9 +158,11 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 - `More app settings →` link
 
 ### Security tab
+
 - (not fully visible — likely handles secrets, permissions)
 
 ### Publish tab
+
 - Deploy to hosting (Netlify etc.)
 
 ---
@@ -150,6 +170,7 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 ## 7. Settings — Full Breakdown
 
 ### Settings Nav (second panel under Settings icon)
+
 - General
 - Workflow
 - AI
@@ -162,6 +183,7 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 - Danger Zone
 
 ### General Settings page
+
 - Theme: System / Light / Dark toggle
 - Language dropdown
 - Zoom level dropdown (100%)
@@ -170,6 +192,7 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 - Node.js Path Configuration + Browse button
 
 ### Model Providers page
+
 - **Card grid layout** — 3 columns
 - Each card: Provider name + `Needs Setup` badge (or `Setup Complete`)
 - Some show `🎁 Free tier available` badge (Google, OpenRouter)
@@ -178,6 +201,7 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 - Clicking a card goes to detail page
 
 ### Provider Detail Page (e.g. Anthropic)
+
 - Header: `Configure Anthropic  ● Setup Complete`
 - `🔑 Manage API Keys  ↗` — purple full-width button, links to provider's key dashboard
 - **API Key from Settings** section:
@@ -206,22 +230,22 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 
 ## 9. Key Features DIGUZ is Missing vs Dyad
 
-| Feature | Dyad | DIGUZ Current | Priority |
-|---|---|---|---|
-| Permanent icon rail nav | ✅ | ❌ hamburger sidebar | High |
-| Right panel always visible | ✅ | ❌ workbench replaces view | High |
-| Right panel tabs (Preview/Code/Configure/Publish) | ✅ | ❌ monolithic workbench | High |
-| File write cards in chat | ✅ | ❌ plain text artifacts | High |
-| App/project as unit (with name) | ✅ | ❌ just chat history | Medium |
-| Version history / rollback | ✅ | ❌ | Medium |
-| Task progress tracker in chat | ✅ | ❌ | Medium |
-| Model providers card grid in settings | ✅ | ❌ dropdown in chat | Medium |
-| Provider detail page (key status, update, delete) | ✅ | ❌ | Medium |
-| Configure tab (env vars + app commands) | ✅ | ❌ | Medium |
-| App creation loading screen | ✅ | ❌ | Low |
-| Chat tabs (browser-style, multiple) | ✅ | ❌ | Low |
-| System Messages panel | ✅ | partial (terminal) | Low |
-| Notification system | ✅ | ❌ | Low |
+| Feature                                           | Dyad | DIGUZ Current              | Priority |
+| ------------------------------------------------- | ---- | -------------------------- | -------- |
+| Permanent icon rail nav                           | ✅   | ❌ hamburger sidebar       | High     |
+| Right panel always visible                        | ✅   | ❌ workbench replaces view | High     |
+| Right panel tabs (Preview/Code/Configure/Publish) | ✅   | ❌ monolithic workbench    | High     |
+| File write cards in chat                          | ✅   | ❌ plain text artifacts    | High     |
+| App/project as unit (with name)                   | ✅   | ❌ just chat history       | Medium   |
+| Version history / rollback                        | ✅   | ❌                         | Medium   |
+| Task progress tracker in chat                     | ✅   | ❌                         | Medium   |
+| Model providers card grid in settings             | ✅   | ❌ dropdown in chat        | Medium   |
+| Provider detail page (key status, update, delete) | ✅   | ❌                         | Medium   |
+| Configure tab (env vars + app commands)           | ✅   | ❌                         | Medium   |
+| App creation loading screen                       | ✅   | ❌                         | Low      |
+| Chat tabs (browser-style, multiple)               | ✅   | ❌                         | Low      |
+| System Messages panel                             | ✅   | partial (terminal)         | Low      |
+| Notification system                               | ✅   | ❌                         | Low      |
 
 ---
 
@@ -236,6 +260,7 @@ Tabs are stacked vertically as icons with labels. Active tab is highlighted.
 - **Buttons:** Rounded, filled purple for primary actions, outlined for secondary
 
 ### For DIGUZ — Keep our own brand
+
 - Keep cream `#f6eff3` background, dark brown borders, pink `#e97ab2` accents, gold `#C9A84C`
 - Keep Sora font
 - But adopt Dyad's **layout structure** and **feature patterns** — just skin them in Diguz palette

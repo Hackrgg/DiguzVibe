@@ -133,10 +133,6 @@ export function setupLocalRunnerHandlers(mainWindow: BrowserWindow) {
     await fs.mkdir(realWorkDir, { recursive: true });
 
     const port = await ensureStaticServer();
-    const staticServerUrl = `http://127.0.0.1:${port}`;
-
-    // Notify renderer that the static file server is ready for previewing
-    mainWindow.webContents.send('local-runner:server-ready', { pid: 0, port, url: staticServerUrl });
 
     return { workdir: VIRTUAL_WORK_DIR, realWorkdir: realWorkDir, platform: process.platform, staticServerPort: port };
   });
