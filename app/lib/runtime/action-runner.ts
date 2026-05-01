@@ -314,7 +314,15 @@ export class ActionRunner {
     }
 
     const webcontainer = await this.#webcontainer;
-    const relativePath = nodePath.relative(webcontainer.workdir, action.filePath);
+
+    /*
+     * If filePath is already relative (e.g. "src/main.tsx"), use it directly.
+     * path.relative(absDir, relPath) produces garbage on Windows with path-browserify,
+     * so we only call it when the filePath is absolute (e.g. "/home/project/src/main.tsx").
+     */
+    const relativePath = nodePath.isAbsolute(action.filePath)
+      ? nodePath.relative(webcontainer.workdir, action.filePath)
+      : action.filePath;
 
     let folder = nodePath.dirname(relativePath);
 
